@@ -1,18 +1,15 @@
 {
+	"background_color": "#161616",
+	"theme_color": "#161616",
+	"name": "BB-Bob",
 	"short_name": "bb-bob",
-	"name": "bb-bob",
+	"display": "fullscreen",
 	"start_url": "/",
 	"icons": [
 		{
 			"src": "logo_512.png",
-			"type": "image/png",
-			"sizes": "512x512"
+			"sizes": "any",
+			"type": "image/png"
 		}
-	],
-	"background_color": "#f0f0f0",
-	"display": "fullscreen",
-	"scope": "/",
-	"theme_color": "#f0f0f0;",
-	"shortcuts": [],
-	"description": "BB-Bob is your friend."
+	]
 }
