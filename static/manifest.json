@@ -1,0 +1,18 @@
+{
+	"short_name": "bb-bob",
+	"name": "bb-bob",
+	"start_url": "/",
+	"icons": [
+		{
+			"src": "logo_512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"background_color": "#f0f0f0",
+	"display": "fullscreen",
+	"scope": "/",
+	"theme_color": "#f0f0f0;",
+	"shortcuts": [],
+	"description": "BB-Bob is your friend."
+}
