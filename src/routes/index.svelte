@@ -48,7 +48,7 @@
 	</div>
 
 	{#if visible}
-		<p transition:typewriter>Hello there, my name is Bob.</p>
+		<p id="greetings" transition:typewriter>Hello there, my name is BB-Bob.</p>
 	{/if}
 </div>
 
