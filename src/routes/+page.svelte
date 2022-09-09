@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { utils } from '$lib/utils';
 
+	let process: any;
+
+	const p = process?.env ? process.env : import.meta.env;
+
 	let typewriter = utils.motion.typewriter;
 
 	let openMouth = false;
 	let closeEyes = false;
 	let visible = false;
 	let started = false;
+
+	let leftButtonLabel = 'start';
 
 	let greetings: HTMLElement | null = null;
 	let greetingMessage = 'Hello there, my name is BB-Bob.';
@@ -16,7 +22,10 @@
 	function start() {
 		if (!started) {
 			started = true;
+			leftButtonLabel = 'tell me something';
 			moveMouth();
+		} else {
+			getFact();
 		}
 	}
 
@@ -51,6 +60,30 @@
 			closeEyes = false;
 		}, 1000);
 	}
+
+	async function getFact(): Promise<string> {
+		const limit = 1;
+		const url = `https://api.api-ninjas.com/v1/facts?limit=${limit}`;
+		const response = await fetch(url, {
+			headers: {
+				'X-Api-Key': p.VITE_NINJA_API_KEY,
+				contentType: 'application/json'
+			}
+		});
+
+		let result = [];
+		if (response.ok) {
+			visible = false;
+
+			result = await response.json();
+
+			if (result.length > 0) {
+				greetingMessage = result[0].fact;
+				visible = true;
+			}
+		}
+		return '';
+	}
 </script>
 
 <div class="bb-bob">
@@ -69,7 +102,7 @@
 	</div>
 
 	<div class="hello-wrapper">
-		<button on:click={start}>start</button>
+		<button on:click={start}>{leftButtonLabel}</button>
 		<button on:click={blink}>blink</button>
 	</div>
 </div>
