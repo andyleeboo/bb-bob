@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { utils } from '$lib/utils';
-	import { fade } from 'svelte/transition';
 
 	let typewriter = utils.motion.typewriter;
 
 	let openMouth = false;
 	let closeEyes = false;
+
+	let firstTear = false;
+	let secondTear = false;
+
+	let wait = false;
+
 	let visible = false;
 	let started = false;
 
@@ -24,6 +29,9 @@
 	}
 
 	function moveMouth() {
+		if (wait) return;
+		wait = true;
+
 		visible = true;
 		setTimeout(() => {
 			blink();
@@ -39,12 +47,16 @@
 				openMouth = false;
 				setTimeout(() => {
 					blink();
+					wait = false;
 				}, 200);
 			}
 		}, 500);
 	}
 
 	function blink() {
+		if (wait) return;
+		wait = true;
+
 		const interval = setInterval(() => {
 			closeEyes = !closeEyes;
 		}, 500);
@@ -52,15 +64,55 @@
 		setTimeout(() => {
 			clearInterval(interval);
 			closeEyes = false;
+			wait = false;
 		}, 1000);
+	}
+
+	function cry() {
+		if (wait) return;
+		wait = true;
+
+		closeEyes = true;
+
+		setTimeout(() => {
+			firstTear = true;
+		}, 500);
+
+		setTimeout(() => {
+			firstTear = false;
+			secondTear = true;
+		}, 1000);
+
+		setTimeout(() => {
+			firstTear = true;
+			secondTear = false;
+		}, 1500);
+
+		setTimeout(() => {
+			firstTear = false;
+			secondTear = true;
+		}, 2000);
+
+		setTimeout(() => {
+			closeEyes = false;
+			secondTear = false;
+			wait = false;
+		}, 2500);
 	}
 </script>
 
 <div class="bb-bob">
 	<div class="face">
 		<div class="eyes">
-			<div class="eye eye--left" class:eye--close={closeEyes} />
-			<div class="eye eye--right" class:eye--close={closeEyes} />
+			<div class="eye-wrapper">
+				<div class="eye eye--left" class:eye--close={closeEyes} />
+				<div class="tear" class:tear--fall-20={firstTear} class:tear--fall-30={secondTear} />
+			</div>
+
+			<div class="eye-wrapper">
+				<div class="eye eye--right" class:eye--close={closeEyes} />
+				<div class="tear" class:tear--fall-20={firstTear} class:tear--fall-30={secondTear} />
+			</div>
 		</div>
 		<div class="mouth" class:mouth--open={openMouth} />
 	</div>
@@ -73,9 +125,13 @@
 
 	<div class="hello-wrapper">
 		{#if !started}
-			<button transition:fade on:click={start}>{leftButtonLabel}</button>
+			<button on:click={start}>
+				{leftButtonLabel}
+			</button>
+		{:else}
+			<button on:click={blink}>blink</button>
+			<button on:click={cry}>cry</button>
 		{/if}
-		<button on:click={blink}>blink</button>
 	</div>
 </div>
 
@@ -97,10 +153,18 @@
 		height: 100px;
 	}
 	.eyes {
-		position: relative;
+		display: flex;
+		justify-content: space-between;
 		width: 120px;
 		height: 50px;
 	}
+
+	.eye-wrapper {
+		position: relative;
+		height: 30px;
+		width: 30px;
+	}
+
 	.eye {
 		position: absolute;
 		bottom: 0;
@@ -121,6 +185,25 @@
 			transform: scale(1, 0.2);
 		}
 	}
+
+	.tear {
+		visibility: hidden;
+		position: absolute;
+		left: 10px;
+		width: 10px;
+		height: 10px;
+		background: #222222;
+
+		&--fall-20 {
+			bottom: -20px;
+			visibility: visible;
+		}
+		&--fall-30 {
+			bottom: -30px;
+			visibility: visible;
+		}
+	}
+
 	.mouth {
 		width: 30px;
 		height: 10px;
@@ -137,9 +220,12 @@
 	}
 
 	.hello-wrapper {
+		width: 208px;
 		margin-top: 40px;
 		display: flex;
+		justify-content: center;
 		gap: 10px;
+		transition: all 1s;
 	}
 
 	/* From uiverse.io by @adamgiebl */
