@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { utils } from '$lib/utils';
-
-	let process: any;
-
-	const p = process?.env ? process.env : import.meta.env;
+	import { fade } from 'svelte/transition';
 
 	let typewriter = utils.motion.typewriter;
 
@@ -22,10 +19,7 @@
 	function start() {
 		if (!started) {
 			started = true;
-			leftButtonLabel = 'tell me something';
 			moveMouth();
-		} else {
-			getFact();
 		}
 	}
 
@@ -60,30 +54,6 @@
 			closeEyes = false;
 		}, 1000);
 	}
-
-	async function getFact(): Promise<string> {
-		const limit = 1;
-		const url = `https://api.api-ninjas.com/v1/facts?limit=${limit}`;
-		const response = await fetch(url, {
-			headers: {
-				'X-Api-Key': p.VITE_NINJA_API_KEY,
-				contentType: 'application/json'
-			}
-		});
-
-		let result = [];
-		if (response.ok) {
-			visible = false;
-
-			result = await response.json();
-
-			if (result.length > 0) {
-				greetingMessage = result[0].fact;
-				visible = true;
-			}
-		}
-		return '';
-	}
 </script>
 
 <div class="bb-bob">
@@ -102,7 +72,9 @@
 	</div>
 
 	<div class="hello-wrapper">
-		<button on:click={start}>{leftButtonLabel}</button>
+		{#if !started}
+			<button transition:fade on:click={start}>{leftButtonLabel}</button>
+		{/if}
 		<button on:click={blink}>blink</button>
 	</div>
 </div>
