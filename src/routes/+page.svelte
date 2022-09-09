@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { utils } from '$lib/utils';
-	import { onMount } from 'svelte';
 
 	let typewriter = utils.motion.typewriter;
 
 	let openMouth = false;
+	let closeEyes = false;
 	let visible = false;
 	let started = false;
 
@@ -21,8 +21,10 @@
 	}
 
 	function moveMouth() {
-		openMouth = !openMouth;
 		visible = true;
+		setTimeout(() => {
+			blink();
+		}, 200);
 
 		const interval = setInterval(() => {
 			openMouth = !openMouth;
@@ -32,18 +34,30 @@
 			if (finished) {
 				clearInterval(interval);
 				openMouth = false;
+				setTimeout(() => {
+					blink();
+				}, 200);
 			}
 		}, 500);
 	}
 
-	onMount(() => {});
+	function blink() {
+		const interval = setInterval(() => {
+			closeEyes = !closeEyes;
+		}, 500);
+
+		setTimeout(() => {
+			clearInterval(interval);
+			closeEyes = false;
+		}, 1000);
+	}
 </script>
 
 <div class="bb-bob">
 	<div class="face">
 		<div class="eyes">
-			<div class="eye" />
-			<div class="eye" />
+			<div class="eye eye--left" class:eye--close={closeEyes} />
+			<div class="eye eye--right" class:eye--close={closeEyes} />
 		</div>
 		<div class="mouth" class:mouth--open={openMouth} />
 	</div>
@@ -56,6 +70,7 @@
 
 	<div class="hello-wrapper">
 		<button on:click={start}>start</button>
+		<button on:click={blink}>blink</button>
 	</div>
 </div>
 
@@ -77,15 +92,29 @@
 		height: 100px;
 	}
 	.eyes {
-		display: flex;
-		justify-content: center;
-		gap: 60px;
+		position: relative;
+		width: 120px;
+		height: 50px;
 	}
 	.eye {
+		position: absolute;
+		bottom: 0;
 		width: 30px;
-		height: 50px;
 		background: #222222;
-		transition: height 1s ease-in-out;
+		transition: all 0.5s;
+		height: 50px;
+		transform: scale(1);
+		&--left {
+			top: 0;
+			left: 0;
+		}
+		&--right {
+			top: 0;
+			right: 0;
+		}
+		&--close {
+			transform: scale(1, 0.2);
+		}
 	}
 	.mouth {
 		width: 30px;
@@ -101,8 +130,11 @@
 	.text-wrapper {
 		height: 40px;
 	}
+
 	.hello-wrapper {
 		margin-top: 40px;
+		display: flex;
+		gap: 10px;
 	}
 
 	/* From uiverse.io by @adamgiebl */
@@ -116,10 +148,6 @@
 		transition: all 0.3s;
 		box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
 		cursor: pointer;
-	}
-
-	button:hover {
-		// border: 1px solid white;
 	}
 
 	button:active {
