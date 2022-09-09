@@ -11,7 +11,6 @@
 	}
 
 	function typewriter(node: HTMLParagraphElement, options: unknown) {
-		console.log(node, options);
 		let speed = 1;
 
 		const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
