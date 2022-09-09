@@ -1,40 +1,42 @@
 <script lang="ts">
+	import { utils } from '$lib/utils';
 	import { onMount } from 'svelte';
+
+	let typewriter = utils.motion.typewriter;
 
 	let openMouth = false;
 	let visible = false;
+	let started = false;
+
+	let greetings: HTMLElement | null = null;
+	let greetingMessage = 'Hello there, my name is BB-Bob.';
+
+	$: finished = greetings?.textContent === greetingMessage;
+
+	function start() {
+		if (!started) {
+			started = true;
+			moveMouth();
+		}
+	}
 
 	function moveMouth() {
 		openMouth = !openMouth;
-		setTimeout(moveMouth, 500);
 		visible = true;
-	}
 
-	function typewriter(node: HTMLParagraphElement, options: unknown) {
-		let speed = 1;
+		const interval = setInterval(() => {
+			openMouth = !openMouth;
 
-		const valid = node.childNodes.length === 1 && node.childNodes[0].nodeType === Node.TEXT_NODE;
+			greetings = document.getElementById('greetings');
 
-		if (!valid) {
-			throw new Error(`This transition only works on elements with a single text node child`);
-		}
-
-		const text = node.textContent || '';
-
-		const duration = text.length / (speed * 0.01);
-
-		return {
-			duration,
-			tick: (t: number) => {
-				const i = Math.trunc(text.length * t);
-				node.textContent = text.slice(0, i);
+			if (finished) {
+				clearInterval(interval);
+				openMouth = false;
 			}
-		};
+		}, 500);
 	}
 
-	onMount(() => {
-		moveMouth();
-	});
+	onMount(() => {});
 </script>
 
 <div class="bb-bob">
@@ -46,9 +48,15 @@
 		<div class="mouth" class:mouth--open={openMouth} />
 	</div>
 
-	{#if visible}
-		<p id="greetings" transition:typewriter>Hello there, my name is BB-Bob.</p>
-	{/if}
+	<div class="text-wrapper">
+		{#if visible}
+			<p id="greetings" transition:typewriter>{greetingMessage}</p>
+		{/if}
+	</div>
+
+	<div class="hello-wrapper">
+		<button on:click={start}>start</button>
+	</div>
 </div>
 
 <style lang="scss">
@@ -88,5 +96,33 @@
 		&--open {
 			height: 30px;
 		}
+	}
+
+	.text-wrapper {
+		height: 40px;
+	}
+	.hello-wrapper {
+		margin-top: 40px;
+	}
+
+	/* From uiverse.io by @adamgiebl */
+	button {
+		color: #090909;
+		padding: 0.7em 1.7em;
+		font-size: 18px;
+		border-radius: 0.5em;
+		background: #e8e8e8;
+		border: 1px solid #e8e8e8;
+		transition: all 0.3s;
+		box-shadow: 6px 6px 12px #c5c5c5, -6px -6px 12px #ffffff;
+		cursor: pointer;
+	}
+
+	button:hover {
+		// border: 1px solid white;
+	}
+
+	button:active {
+		box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
 	}
 </style>
