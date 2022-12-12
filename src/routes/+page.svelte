@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { supabase } from '$lib/supabase/supabase-client';
 	import { utils } from '$lib/utils';
+	import { onMount } from 'svelte';
 
 	let typewriter = utils.motion.typewriter;
 
@@ -103,6 +105,23 @@
 	function yell() {
 		alert('AHHHHHH!!!');
 	}
+
+	async function fetchHighfives() {
+		const { data, error } = await supabase.from('highfive').select('*', { count: 'exact', head: true });
+		console.log('highfive:', data);
+		console.log('error:', error);
+	}
+
+	onMount(() => {
+		fetchHighfives();
+
+		supabase
+			.channel('public:highfive')
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'highfive' }, (payload) => {
+				console.log('Change received!', payload);
+			})
+			.subscribe();
+	});
 </script>
 
 <div class="bb-bob">
