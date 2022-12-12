@@ -99,6 +99,10 @@
 			wait = false;
 		}, 2500);
 	}
+
+	function yell() {
+		alert('AHHHHHH!!!');
+	}
 </script>
 
 <div class="bb-bob">
@@ -131,6 +135,7 @@
 		{:else}
 			<button on:click={blink}>blink</button>
 			<button on:click={cry}>cry</button>
+			<button on:click={yell}>yell</button>
 		{/if}
 	</div>
 </div>
