@@ -291,7 +291,9 @@
 		box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
 	}
 	.bottom-wrapper {
+		padding: 0 18px;
 		display: flex;
+		flex-wrap: wrap;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
