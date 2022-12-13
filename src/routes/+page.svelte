@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { highfiveCountStore } from '$lib/store/highfive-store';
+	import { supabase } from '$lib/supabase/supabase-client';
 	import { utils } from '$lib/utils';
+	import { onMount } from 'svelte';
 
 	let typewriter = utils.motion.typewriter;
 
@@ -103,6 +106,37 @@
 	function yell() {
 		alert('AHHHHHH!!!');
 	}
+
+	async function highFive() {
+		const { error } = await supabase.from('highfive').insert({});
+		if (error) {
+			console.log(error);
+		}
+	}
+
+	async function fetchHighfives() {
+		const { count, error } = await supabase.from('highfive').select('*', { count: 'exact' });
+
+		if (error) {
+			console.log(error);
+			return;
+		}
+
+		if (count) {
+			highfiveCountStore.update((n) => count);
+		}
+	}
+
+	onMount(() => {
+		fetchHighfives();
+
+		supabase
+			.channel('public:highfive')
+			.on('postgres_changes', { event: '*', schema: 'public', table: 'highfive' }, (payload) => {
+				fetchHighfives();
+			})
+			.subscribe();
+	});
 </script>
 
 <div class="bb-bob">
@@ -133,9 +167,16 @@
 				{leftButtonLabel}
 			</button>
 		{:else}
-			<button on:click={blink}>blink</button>
-			<button on:click={cry}>cry</button>
-			<button on:click={yell}>yell</button>
+			<div class="bottom-wrapper">
+				<div class="button-wrapper">
+					<button on:click={blink}>blink</button>
+					<button on:click={cry}>cry</button>
+					<button on:click={yell}>yell</button>
+					<button on:click={highFive}>high five</button>
+				</div>
+
+				<p>high fives: {$highfiveCountStore}</p>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -248,5 +289,17 @@
 
 	button:active {
 		box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
+	}
+	.bottom-wrapper {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 20px;
+	}
+
+	.button-wrapper {
+		display: flex;
+		gap: 10px;
 	}
 </style>
