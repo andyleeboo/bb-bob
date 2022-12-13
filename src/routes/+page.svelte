@@ -171,8 +171,7 @@
 				<div class="button-wrapper">
 					<button on:click={blink}>blink</button>
 					<button on:click={cry}>cry</button>
-					<button on:click={yell}>yell</button>
-					<button on:click={highFive}>high five</button>
+					<button on:click={highFive}>✋</button>
 				</div>
 
 				<p>high fives: {$highfiveCountStore}</p>
@@ -277,7 +276,7 @@
 	/* From uiverse.io by @adamgiebl */
 	button {
 		color: #090909;
-		padding: 0.7em 1.7em;
+		padding: 0.4em 1.7em;
 		font-size: 18px;
 		border-radius: 0.5em;
 		background: #e8e8e8;
@@ -291,7 +290,6 @@
 		box-shadow: 4px 4px 12px #c5c5c5, -4px -4px 12px #ffffff;
 	}
 	.bottom-wrapper {
-		padding: 0 18px;
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: column;
