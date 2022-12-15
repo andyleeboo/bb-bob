@@ -103,12 +103,11 @@
 		}, 2500);
 	}
 
-	function yell() {
-		alert('AHHHHHH!!!');
-	}
-
 	async function highFive() {
-		const { error } = await supabase.from('highfive').insert({});
+		const { error } = await supabase.from('highfive').insert({
+			user_agent: navigator.userAgent,
+			time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone
+		});
 		if (error) {
 			console.log(error);
 		}
@@ -128,6 +127,10 @@
 	}
 
 	onMount(() => {
+		setInterval(() => {
+			blink();
+		}, 5000);
+
 		fetchHighfives();
 
 		supabase
