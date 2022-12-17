@@ -129,7 +129,7 @@
 	onMount(() => {
 		setInterval(() => {
 			blink();
-		}, 5000);
+		}, 3000);
 
 		fetchHighfives();
 
