@@ -107,8 +107,8 @@
 		const data: HighFive = {
 			userAgent: navigator.userAgent,
 			timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-			userId: undefined,
-			email: undefined
+			userId: null,
+			email: null
 		};
 
 		await addDoc(collection(firestore, 'high_five'), data);
