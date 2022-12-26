@@ -142,6 +142,19 @@
 	}
 
 	onMount(() => {
+		document.addEventListener('touchstart', function (event) {
+			if (event.touches.length > 1) {
+				// Cancel zoom behavior
+				event.preventDefault();
+			}
+		});
+		document.addEventListener('touchend', function (event) {
+			if (event.touches.length > 1) {
+				// Cancel zoom behavior
+				event.preventDefault();
+			}
+		});
+
 		setInterval(() => {
 			blink();
 		}, 3000);
