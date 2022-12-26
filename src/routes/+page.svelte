@@ -205,6 +205,9 @@
 </div>
 
 <style lang="scss">
+	button {
+		touch-action: manipulation;
+	}
 	.bb-bob {
 		display: flex;
 		flex-direction: column;
