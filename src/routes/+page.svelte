@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { analytics } from '$lib/firebase';
 	import { highfiveCountStore } from '$lib/store/highfive-store';
 	import { utils } from '$lib/utils';
+	import { logEvent } from 'firebase/analytics';
 	import { onMount } from 'svelte';
 
 	let typewriter = utils.motion.typewriter;
@@ -103,6 +105,9 @@
 	}
 
 	async function highFive() {
+		logEvent(analytics, 'high_fived', {
+			userId: null
+		});
 		// const { error } = await supabase.from('highfive').insert({
 		// 	user_agent: navigator.userAgent,
 		// 	time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone
