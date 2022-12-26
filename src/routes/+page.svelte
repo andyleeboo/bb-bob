@@ -14,7 +14,6 @@
 
 	let wait = false;
 
-	let visible = false;
 	let started = false;
 
 	let greetings: HTMLElement | null = null;
@@ -25,7 +24,6 @@
 	function start() {
 		if (!started) {
 			started = true;
-			// moveMouth();
 		}
 	}
 
@@ -33,7 +31,6 @@
 		if (wait) return;
 		wait = true;
 
-		visible = true;
 		setTimeout(() => {
 			blink();
 		}, 200);
@@ -109,7 +106,9 @@
 
 		const data: HighFive = {
 			userAgent: navigator.userAgent,
-			timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+			timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+			userId: undefined,
+			email: undefined
 		};
 
 		await addDoc(collection(firestore, 'high_five'), data);
@@ -117,7 +116,7 @@
 	}
 
 	function saySomethingRandomly() {
-		const random = Math.floor(Math.random() * 3);
+		const random = Math.floor(Math.random() * 4);
 		switch (random) {
 			case 0:
 				greetingMessage = '하이파이브! 반가워요!';
@@ -127,6 +126,10 @@
 				break;
 			case 2:
 				greetingMessage = '✋';
+				break;
+			case 3:
+				greetingMessage = '앗 힘이 세네요! 아팠어요 😭';
+				cry();
 				break;
 		}
 		finished = true;
