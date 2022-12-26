@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { highfiveCountStore } from '$lib/store/highfive-store';
-	import { supabase } from '$lib/supabase/supabase-client';
 	import { utils } from '$lib/utils';
 	import { onMount } from 'svelte';
 
@@ -104,26 +103,23 @@
 	}
 
 	async function highFive() {
-		const { error } = await supabase.from('highfive').insert({
-			user_agent: navigator.userAgent,
-			time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone
-		});
-		if (error) {
-			console.log(error);
-		}
+		// const { error } = await supabase.from('highfive').insert({
+		// 	user_agent: navigator.userAgent,
+		// 	time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone
+		// });
+		// if (error) {
+		// 	console.log(error);
+		// }
 	}
 
 	async function fetchHighfives() {
-		const { count, error } = await supabase.from('highfive').select('*', { count: 'exact' });
-
-		if (error) {
-			console.log(error);
-			return;
-		}
-
-		if (count) {
-			highfiveCountStore.update((n) => count);
-		}
+		// if (error) {
+		// 	console.log(error);
+		// 	return;
+		// }
+		// if (count) {
+		// 	highfiveCountStore.update((n) => count);
+		// }
 	}
 
 	onMount(() => {
@@ -132,13 +128,6 @@
 		}, 3000);
 
 		fetchHighfives();
-
-		supabase
-			.channel('public:highfive')
-			.on('postgres_changes', { event: '*', schema: 'public', table: 'highfive' }, (payload) => {
-				fetchHighfives();
-			})
-			.subscribe();
 	});
 </script>
 
