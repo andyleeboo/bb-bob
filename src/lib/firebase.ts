@@ -36,10 +36,6 @@ if (browser) {
 	auth = getAuth(app);
 	analytics = getAnalytics(app);
 	firestore = getFirestore(app);
-
-	console.log('auth', auth);
-	console.log('analytics:', analytics);
-	console.log('firestore:', firestore);
 }
 
 export { app, auth, analytics, firestore };

@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { analytics } from '$lib/firebase';
+	import { analytics, firestore } from '$lib/firebase';
+	import type { HighFive } from '$lib/model/high-five';
 	import { highfiveCountStore } from '$lib/store/highfive-store';
-	import { utils } from '$lib/utils';
 	import { logEvent } from 'firebase/analytics';
+	import { addDoc, collection, getCountFromServer } from 'firebase/firestore';
 	import { onMount } from 'svelte';
-
-	let typewriter = utils.motion.typewriter;
 
 	let openMouth = false;
 	let closeEyes = false;
@@ -18,17 +17,15 @@
 	let visible = false;
 	let started = false;
 
-	let leftButtonLabel = 'start';
-
 	let greetings: HTMLElement | null = null;
-	let greetingMessage = 'Hello there, my name is BB-Bob.';
 
+	$: greetingMessage = '안녕하세요. 저는 BB-Bob 입니다.';
 	$: finished = greetings?.textContent === greetingMessage;
 
 	function start() {
 		if (!started) {
 			started = true;
-			moveMouth();
+			// moveMouth();
 		}
 	}
 
@@ -105,32 +102,48 @@
 	}
 
 	async function highFive() {
+		saySomethingRandomly();
 		logEvent(analytics, 'high_fived', {
 			userId: null
 		});
-		// const { error } = await supabase.from('highfive').insert({
-		// 	user_agent: navigator.userAgent,
-		// 	time_zone: Intl.DateTimeFormat().resolvedOptions().timeZone
-		// });
-		// if (error) {
-		// 	console.log(error);
-		// }
+
+		const data: HighFive = {
+			userAgent: navigator.userAgent,
+			timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+		};
+
+		await addDoc(collection(firestore, 'high_five'), data);
+		await fetchHighfives();
+	}
+
+	function saySomethingRandomly() {
+		const random = Math.floor(Math.random() * 3);
+		switch (random) {
+			case 0:
+				greetingMessage = '하이파이브! 반가워요!';
+				break;
+			case 1:
+				greetingMessage = '제가 손이 없지만 하이파이브 좋네요.';
+				break;
+			case 2:
+				greetingMessage = '✋';
+				break;
+		}
+		finished = true;
 	}
 
 	async function fetchHighfives() {
-		// if (error) {
-		// 	console.log(error);
-		// 	return;
-		// }
-		// if (count) {
-		// 	highfiveCountStore.update((n) => count);
-		// }
+		const snapshot = await getCountFromServer(collection(firestore, 'high_five'));
+		const count = await snapshot.data().count;
+		highfiveCountStore.set(count);
 	}
 
 	onMount(() => {
 		setInterval(() => {
 			blink();
 		}, 3000);
+
+		start();
 
 		fetchHighfives();
 	});
@@ -153,21 +166,19 @@
 	</div>
 
 	<div class="text-wrapper">
-		{#if visible}
-			<p id="greetings" transition:typewriter>{greetingMessage}</p>
-		{/if}
+		<p>{greetingMessage}</p>
 	</div>
 
 	<div class="hello-wrapper">
 		{#if !started}
-			<button on:click={start}>
+			<!-- <button on:click={start}>
 				{leftButtonLabel}
-			</button>
+			</button> -->
 		{:else}
 			<div class="bottom-wrapper">
 				<div class="button-wrapper">
-					<button on:click={blink}>blink</button>
-					<button on:click={cry}>cry</button>
+					<!-- <button on:click={blink}>blink</button>
+					<button on:click={cry}>cry</button> -->
 					<button on:click={highFive}>✋</button>
 				</div>
 
