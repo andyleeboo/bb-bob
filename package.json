@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"description": "BB-Bob is your friend.",
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --port 5174",
 		"dev:host": "vite dev --host",
 		"build": "vite build",
 		"package": "svelte-kit package",
@@ -37,6 +37,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"cypress": "^12.3.0",
 		"firebase": "^9.15.0"
 	}
 }
